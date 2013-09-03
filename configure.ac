@@ -32,11 +32,11 @@ if test "x$HAVE_PKGCONFIG" = "xno"; then
 fi
 
 dnl Now we're ready to ask for gstreamer
-PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= 0.10.22 , HAVE_GSTREAMER=yes, HAVE_GSTREAMER=no)
+PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 , HAVE_GSTREAMER=yes, HAVE_GSTREAMER=no)
 
 dnl Give error and exit if we don't have gstreamer
 if test "x$HAVE_GSTREAMER" = "xno"; then
-  AC_MSG_ERROR([you need gstreamer development packages installed >= 0.10.22 !])
+  AC_MSG_ERROR([you need gstreamer development packages installed >= 1.0 !])
 fi
 
 dnl append GSTREAMER_ERROR cflags to GSTREAMER_CFLAGS
@@ -46,7 +46,7 @@ dnl make GSTREAMER_CFLAGS and GSTREAMER_LIBS available
 AC_SUBST(GSTREAMER_CFLAGS)
 AC_SUBST(GSTREAMER_LIBS)
 
-_PKG_CONFIG([GSTREAMER_VERSION], [modversion], [gstreamer-0.10])
+_PKG_CONFIG([GSTREAMER_VERSION], [modversion], [gstreamer-1.0])
 GSTREAMER_MAJOR=`echo $pkg_cv_GSTREAMER_VERSION | sed "s/\(.*\)\.\(.*\)\.\(.*\)/\1/"`
 GSTREAMER_MINOR=`echo $pkg_cv_GSTREAMER_VERSION | sed "s/\(.*\)\.\(.*\)\.\(.*\)/\2/"`
 GSTREAMER_RELEASE=`echo $pkg_cv_GSTREAMER_VERSION | sed "s/\(.*\)\.\(.*\)\.\(.*\)/\3/"`
@@ -70,18 +70,6 @@ else
 fi
 AC_SUBST(GSTREAMER_SUPPORT_STEP)
 
-
-dnl Now we're ready to ask for gstreamer-interfaces
-PKG_CHECK_MODULES(GSTREAMER_INTERFACES, gstreamer-interfaces-0.10 >= 0.10.22 , HAVE_GSTREAMER_INTERFACES=yes, HAVE_GSTREAMER_INTERFACES=no)
-
-dnl Give error and exit if we don't have gstreamer
-if test "x$HAVE_GSTREAMER_INTERFACES" = "xno"; then
-  AC_MSG_ERROR([you need gst-plugins-base development packages installed !])
-fi
-
-dnl make GSTREAMER_INTERFACES_CFLAGS and GSTREAMER_INTERFACES_LIBS available
-AC_SUBST(GSTREAMER_INTERFACES_CFLAGS)
-AC_SUBST(GSTREAMER_INTERFACES_LIBS)
 
 dnl Now we're ready to ask for gio-2.0
 PKG_CHECK_MODULES(GIO, gio-2.0 >= 2.0 , HAVE_GIO=yes, HAVE_GIO=no)
