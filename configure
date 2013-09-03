@@ -3503,11 +3503,11 @@ fi
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No Vala compiler found.  You will not be able to compile .vala source files." >&5
 $as_echo "$as_me: WARNING: No Vala compiler found.  You will not be able to compile .vala source files." >&2;}
 else
-  if test -n "0.12"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking $VALAC is at least version 0.12" >&5
-$as_echo_n "checking $VALAC is at least version 0.12... " >&6; }
+  if test -n "0.17.5"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking $VALAC is at least version 0.17.5" >&5
+$as_echo_n "checking $VALAC is at least version 0.17.5... " >&6; }
        am__vala_version=`$VALAC --version | sed 's/Vala  *//'`
-       as_arg_v1=0.12
+       as_arg_v1=0.17.5
 as_arg_v2="$am__vala_version"
 awk "$as_awk_strverscmp" v1="$as_arg_v1" v2="$as_arg_v2" /dev/null
 case $? in #(
@@ -3520,7 +3520,7 @@ $as_echo "yes" >&6; } ;; #(
   2) :
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-          as_fn_error $? "Vala 0.12 not found." "$LINENO" 5 ;; #(
+          as_fn_error $? "Vala 0.17.5 not found." "$LINENO" 5 ;; #(
   *) :
      ;;
 esac
@@ -4068,7 +4068,7 @@ fi
 
 
 if test -z "$VAPIDIR"; then
-  VAPIDIR=/usr/share/vala-0.12/vapi
+  VAPIDIR=/usr/share/vala-0.18/vapi
 fi
 
 

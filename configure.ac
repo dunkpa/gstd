@@ -11,7 +11,7 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES(gstd-1.3.pc:gstd-1.3.pc.in)
 AC_CONFIG_FILES(com.ridgerun.gstreamer.gstd.service:com.ridgerun.gstreamer.gstd.service.in)
 
-AM_PROG_VALAC([0.12])
+AM_PROG_VALAC([0.17.5])
 
 dnl Check for readline library
 AC_TRY_CPP([#include <readline/readline.h>],have_readline=yes, have_readline=no)
@@ -84,7 +84,7 @@ AC_SUBST(GIO_CFLAGS)
 AC_SUBST(GIO_LIBS)
 
 if test -z "$VAPIDIR"; then
-  VAPIDIR=/usr/share/vala-0.12/vapi
+  VAPIDIR=/usr/share/vala-0.18/vapi
 fi
 AC_ARG_VAR([VAPIDIR], [path for the vala bindings])
 AC_ARG_WITH(vapidir,
