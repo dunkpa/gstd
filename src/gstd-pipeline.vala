@@ -35,7 +35,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 			/*Get and watch bus */
 			Gst.Bus bus = _pipeline.get_bus ();
 			bus.set_sync_handler(bus_sync_callback);
-			bus.add_watch (bus_callback);
+			bus.add_watch (GLib.Priority.DEFAULT, bus_callback);
 			/* The bus watch increases our ref count, so we need to unreference
 			 * ourselfs in order to provide properly release behavior of this
 			 * object
@@ -82,12 +82,14 @@ public class Pipeline : GLib.Object, PipelineInterface
 		if (sink == null)
 			return Gst.BusSyncReply.PASS;
 
-		var overlay = sink as Gst.XOverlay;
+        /*
+		var overlay = sink as Gst.Video.OverlayComposition;
 		if (overlay == null)
 			return Gst.BusSyncReply.PASS;
+        */
 
 		Posix.syslog (Posix.LOG_DEBUG, "set xwindow-id %llu", _windowId);
-		overlay.set_xwindow_id((ulong)_windowId);
+		/*overlay.set_xwindow_id((ulong)_windowId);*/
 
 		return Gst.BusSyncReply.PASS;
 	}
@@ -435,8 +437,8 @@ public class Pipeline : GLib.Object, PipelineInterface
 			return false;
 		}
 
-		Gst.Value val = GLib.Value(typeof(Gst.Fraction));
-		val.set_fraction(numerator, denominator);
+		GLib.Value val = GLib.Value(typeof(Gst.Fraction));
+		Gst.Value.set_fraction(val, numerator, denominator);
 		e.set_property (property, val);
 		return true;
 	}
@@ -626,7 +628,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 			return false;
 		}
 
-		Gst.Value tmp = GLib.Value(typeof(double));
+		GLib.Value tmp = GLib.Value(typeof(double));
 		e.get_property (property, ref tmp);
 		val = tmp.get_double();
 		return true;
@@ -663,11 +665,11 @@ public class Pipeline : GLib.Object, PipelineInterface
 			return false;
 		}
 
-		Gst.Value val = GLib.Value(typeof(Gst.Fraction));
+		GLib.Value val = GLib.Value(typeof(Gst.Fraction));
 		e.get_property (property, ref val);
 		
-		numerator = val.get_fraction_numerator();
-		denominator = val.get_fraction_denominator();
+		numerator = Gst.Value.get_fraction_numerator(val);
+		denominator = Gst.Value.get_fraction_denominator(val);
 
 		return true;		
 	}
@@ -767,8 +769,12 @@ public class Pipeline : GLib.Object, PipelineInterface
 
 		if (buffer != null)
 		{
-			caps = (buffer.caps != null) ? buffer.caps.to_string() : "";
-			data = buffer.data;
+            /* @todo caps are not set on buffers anymore, but on the pad the 
+                     buffer is being pushed to. */
+			/*caps = (buffer.caps != null) ? buffer.caps.to_string() : "";*/
+            /* @todo - buffers don't have simple data anymore */
+			/* data = buffer.data; */
+            data = null;
 		}
 
 		return true;
@@ -783,7 +789,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 		/* Query duration */
 		var format = Gst.Format.TIME;
 		int64 duration = 0;
-		if (!_pipeline.query_duration (ref format, out duration))
+		if (!_pipeline.query_duration (format, out duration))
 		{
 			return -1;
 		}
@@ -809,7 +815,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 		var format = Gst.Format.TIME;
 		int64 position = 0;
 
-		if (!_pipeline.query_position (ref format, out position))
+		if (!_pipeline.query_position (format, out position))
 		{
 			return -1;
 		}
@@ -828,7 +834,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 	private bool pipeline_seek_impl (int64 ipos_ns)
 	{
 		/*Set the current position */
-		if (!_pipeline.seek (_rate, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, ipos_ns, Gst.SeekType.NONE, Gst.CLOCK_TIME_NONE))
+		if (!_pipeline.seek (_rate, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, ipos_ns, Gst.SeekType.NONE, 0))
 		{
 			Posix.syslog (Posix.LOG_WARNING, "Media type not seekable");
 			return false;
@@ -922,7 +928,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 		int64 cur_pos_ns = 0;
 
 		/*Gets the current position */
-		if (!_pipeline.query_position (ref format, out cur_pos_ns))
+		if (!_pipeline.query_position (format, out cur_pos_ns))
 		{
 			return false;
 		}
@@ -931,7 +937,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 		int64 seek_ns = cur_pos_ns + period_ns;
 
 		/*Set the current position */
-		if (!_pipeline.seek (_rate, format, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, seek_ns, Gst.SeekType.NONE, Gst.CLOCK_TIME_NONE))
+		if (!_pipeline.seek (_rate, format, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, seek_ns, Gst.SeekType.NONE, 0))
 		{
 			Posix.syslog (Posix.LOG_WARNING, "Media type not seekable");
 			return false;
@@ -952,7 +958,7 @@ public class Pipeline : GLib.Object, PipelineInterface
 		_rate = new_rate;
 
 		/*Changes the rate on the pipeline */
-		if (!_pipeline.seek (_rate, Gst.Format.TIME, Gst.SeekFlags.SKIP | Gst.SeekFlags.FLUSH, Gst.SeekType.NONE, Gst.CLOCK_TIME_NONE, Gst.SeekType.NONE, Gst.CLOCK_TIME_NONE))
+		if (!_pipeline.seek (_rate, Gst.Format.TIME, Gst.SeekFlags.SKIP | Gst.SeekFlags.FLUSH, Gst.SeekType.NONE, 0, Gst.SeekType.NONE, 0))
 		{
 			Posix.syslog (Posix.LOG_WARNING, "Speed could not be changed");
 			return false;
