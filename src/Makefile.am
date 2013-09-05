@@ -19,7 +19,7 @@ gst_client_CFLAGS = @GSTREAMER_CFLAGS@
 gst_client_LDADD = @GSTREAMER_LIBS@ @GIO_LIBS@ @READLINE_LIBS@
 
 install-data-hook:
-	cd $(bindir) ; rm -f gst-client-interpreter ; $(LN_S) gst-client gst-client-interpreter
+	cd $(DESTDIR)$(bindir) ; rm -f gst-client-interpreter ; $(LN_S) gst-client gst-client-interpreter
 
 interfaces_xml := com.ridgerun.gstreamer.gstd.FactoryInterface.xml \
  com.ridgerun.gstreamer.gstd.PipelineInterface.xml
