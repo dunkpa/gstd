@@ -83,15 +83,11 @@ dnl make GIO_CFLAGS and GIO_LIBS available
 AC_SUBST(GIO_CFLAGS)
 AC_SUBST(GIO_LIBS)
 
-if test -z "$VAPIDIR"; then
-  VAPIDIR=/usr/share/vala-0.18/vapi
-fi
-AC_ARG_VAR([VAPIDIR], [path for the vala bindings])
 AC_ARG_WITH(vapidir,
   [AS_HELP_STRING([--with-vapidir=<path>],
     [Set the path for the vapidir])],
   [AC_MSG_NOTICE([Setting the vapidir "$withval"])
-   AC_SUBST([VAPIDIR],[$withval])
+   AC_SUBST([EXTRA_VAPIDIR],[--vapidir=$withval])
   ]
 )
 

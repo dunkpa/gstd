@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 bin_PROGRAMS = gstd gst-client
 
 gstd_SOURCES = gstd-interfaces.vala gstd-main.vala gstd-factory.vala gstd-pipeline.vala gstd-signals.vala
-gstd_VALAFLAGS = --thread --vapidir=@VAPIDIR@ --vapidir=. --pkg gstd-config \
+gstd_VALAFLAGS = --thread @EXTRA_VAPIDIR@ --vapidir=. --pkg gstd-config \
     --pkg gio-2.0 --pkg gstreamer-1.0 --pkg gstreamer-base-1.0 \
 	--pkg gstreamer-video-1.0 --pkg posix \
     @GSTREAMER_SUPPORT_QOS_SIGNAL@ @GSTREAMER_SUPPORT_STEP@ @GSTD_SUPPORT_SIGNALS@
@@ -11,7 +11,7 @@ gstd_CFLAGS = @GSTREAMER_CFLAGS@ @GIO_CFLAGS@
 gstd_LDADD = @GSTREAMER_LIBS@ @GIO_LIBS@
 
 gst_client_SOURCES = gstd-interfaces.vala gst-client.vala
-gst_client_VALAFLAGS = --vapidir=@VAPIDIR@ --vapidir=. --pkg gstd-config \
+gst_client_VALAFLAGS = @EXTRA_VAPIDIR@ --vapidir=. --pkg gstd-config \
     --pkg gio-2.0 --pkg gstreamer-1.0 --pkg gstreamer-base-1.0 \
 	--pkg gstreamer-video-1.0 --pkg posix \
     @READLINE_SUPPORT@

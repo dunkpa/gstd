@@ -629,7 +629,7 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 GSTD_SUPPORT_SIGNALS
-VAPIDIR
+EXTRA_VAPIDIR
 GIO_LIBS
 GIO_CFLAGS
 GSTREAMER_SUPPORT_STEP
@@ -752,8 +752,7 @@ PKG_CONFIG_LIBDIR
 GSTREAMER_CFLAGS
 GSTREAMER_LIBS
 GIO_CFLAGS
-GIO_LIBS
-VAPIDIR'
+GIO_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1401,7 +1400,6 @@ Some influential environment variables:
               linker flags for GSTREAMER, overriding pkg-config
   GIO_CFLAGS  C compiler flags for GIO, overriding pkg-config
   GIO_LIBS    linker flags for GIO, overriding pkg-config
-  VAPIDIR     path for the vala bindings
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -4067,16 +4065,12 @@ fi
 
 
 
-if test -z "$VAPIDIR"; then
-  VAPIDIR=/usr/share/vala-0.18/vapi
-fi
-
 
 # Check whether --with-vapidir was given.
 if test "${with_vapidir+set}" = set; then :
   withval=$with_vapidir; { $as_echo "$as_me:${as_lineno-$LINENO}: Setting the vapidir \"$withval\"" >&5
 $as_echo "$as_me: Setting the vapidir \"$withval\"" >&6;}
-   VAPIDIR=$withval
+   EXTRA_VAPIDIR=--vapidir=$withval
 
 
 
