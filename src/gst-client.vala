@@ -48,6 +48,7 @@ public class GstdCli : GLib.Object
 	[CCode (array_length = false, array_null_terminated = true)]
 	private static string[] _remaining_args;
 	private static bool useSessionBus = false;
+	private static bool eosReceived = false;
 	# if HAVE_READLINE
 	// true: This client is used by an interactive shell. false: This client is used as an interpreter of a script
 	private static bool isInteractive;
@@ -132,6 +133,7 @@ public class GstdCli : GLib.Object
 		  "\t\tNegative rate causes reverse playback.",
 		"step|"+"step [number of frames]|"+"Step the number of frames, if no number is provided, 1 is assumed",
 		"send-eos|"+"send-eos|"+"Send an EOS event on the pipeline",
+		"wait-eos|"+"wait-eos <timeout[ms]>|"+"Wait for an EOS event to be signalled by the pipeline",
 		"send-custom-event|"+"send-custom-event <custom type> <name of event>|"+
 		  "Send a custom event on the pipeline. The event type can be:\n" +
 		  "\t\t* UPSTREAM\n" +
@@ -181,9 +183,10 @@ public class GstdCli : GLib.Object
 		stdout.printf ("Error signal received\n");
 	}
 
-	public void EoS_cb ()
+	public void eos_cb ()
 	{
 		stdout.printf ("End of Stream signal received\n");
+		eosReceived = true;
 	}
 
 	public void StateChanged_cb ()
@@ -878,6 +881,35 @@ public class GstdCli : GLib.Object
 		}
 	}
 
+	private bool wait_eos (PipelineInterface pipeline, string[] args)
+	{
+		if (args[1] == null)
+		{
+			stdout.printf("Error:\nMissing arguments. Execute:'help wait-eos'\n");
+			return false;
+		}
+
+		int timeoutMSec = int.parse(args[1]);
+		stdout.printf("Waiting for EOS with timeout of %d ms\n", timeoutMSec);
+
+		eosReceived = false;
+		pipeline.eos.connect(this.eos_cb);
+
+		MainLoop loop = new MainLoop(null, false);
+		TimeoutSource timeout = new TimeoutSource(timeoutMSec);
+		pipeline.eos.connect(() => {loop.quit();});
+		timeout.set_callback(() =>
+				{
+				stdout.printf("Timeout waiting for EOS.\n");
+				loop.quit();
+				return false;
+				});
+		timeout.attach(loop.get_context());
+		loop.run();
+
+		return eosReceived;
+	}
+
 	private bool pipeline_list ()
 	{
 		try
@@ -1153,6 +1185,9 @@ public class GstdCli : GLib.Object
 
 			case "send-custom-event":
 				return pipeline_send_custom_event (pipeline, args);
+
+			case "wait-eos":
+				return wait_eos(pipeline, args);
 
 			case "list-pipes":
 				return pipeline_list ();
